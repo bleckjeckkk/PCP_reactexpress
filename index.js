@@ -67,10 +67,12 @@ app.get('/products/add', (req, res) => {
     productName,
     productPrice,
     productAvailability,
-    supermarketID
+    supermarketID,
+    productMatch,
   } = req.query;
-  const INSERT_PRODUCTS_QUERY = `INSERT INTO product (productID,productName, productPrice, productAvailability, supermarketID)
-  VALUES (${productID},'${productName}', ${productPrice}, ${productAvailability}, ${supermarketID})`;
+  const INSERT_PRODUCTS_QUERY = `INSERT INTO product (productID,productName, productPrice, productAvailability, supermarketID, productMatch)
+  VALUES (${productID},'${productName}', ${productPrice}, ${productAvailability}, ${supermarketID}, ${productMatch})`;
+  console.log(INSERT_PRODUCTS_QUERY);
   connection.query(INSERT_PRODUCTS_QUERY, (err, results) => {
     if (err) {
       return res.json({
@@ -249,8 +251,9 @@ app.get('/users/delete', (req, res) => {
 
 //delete products
 app.get('/products/delete', (req, res) => {
-  const{productID} = req.query;
+  const{ productID } = req.query;
   const DELETE_PRODUCTS_QUERY = `DELETE FROM product WHERE productID = ${productID}`;
+  console.log(DELETE_PRODUCTS_QUERY);
   connection.query(DELETE_PRODUCTS_QUERY, (err, results) => {
     if (err) {
       return res.json({
