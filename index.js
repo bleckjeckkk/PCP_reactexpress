@@ -21,7 +21,7 @@ const OFFLINE_CREDENTIALS = {
   database: 'price_check_program'
 };
 
-const CREDENTIALS = ONLINE_CREDENTIALS;
+const CREDENTIALS = OFFLINE_CREDENTIALS;
 
 //const connection = mysql.createConnection(CREDENTIALS);
 
@@ -271,7 +271,6 @@ app.get('/supermarkets/delete', (req, res) => {
   const{supermarketID} = req.query;
   const DELETE_LINKED_PRODUCTS = `DELETE FROM product WHERE product.supermarketID = ${supermarketID}`;
   const DELETE_SUPERMARKETS_QUERY = `DELETE FROM supermarket WHERE supermarketID = ${supermarketID}`;
-  console.log(DELETE_LINKED_PRODUCTS);
   
   connection.query(DELETE_LINKED_PRODUCTS, (err, results) => {
     if (err) {
@@ -462,8 +461,6 @@ app.get('/feedbacks', (req, res) => {
 
 
 
-
-
 // ---------------------------------------------------------------------------
 // ----------------------------------- MISC ----------------------------------
 // ---------------------------------------------------------------------------
@@ -534,7 +531,7 @@ app.get('/products/find', (req, res) => {
 app.get('/users/auth', (req, res) => {
   const { userName, userPassword } = req.query;
 
-  const GET_USERS_QUERY = `SELECT userID, userName, userPassword, isAdmin, firstName, lastName FROM user
+  const GET_USERS_QUERY = `SELECT userID, userName, userPassword, isAdmin, firstName, lastName, favItems FROM user
   WHERE userName = '${userName}'`;
   connection.query(GET_USERS_QUERY, (err, results) => {
     if (err) {
@@ -553,6 +550,7 @@ app.get('/users/auth', (req, res) => {
             firstName : results[0].firstName,
             lastName : results[0].lastName,
             userName : results[0].userName,
+            favItems : results[0].favItems,
           }
         });
       });
@@ -596,6 +594,7 @@ app.get('/users/check', (req, res) => {
   });
 });
 
+//to call when "transforming" keys to products
 app.get('/products/getProducts', (req,res) =>{
   const {products} = req.query;
   var prod = JSON.parse(products);
@@ -665,6 +664,44 @@ app.get('/products/getProducts', (req,res) =>{
   });
 });
 
+app.get('/users/updateFav', (req,res) =>{
+  const { userID, favItems } = req.query;
+  const UPDATE_FAVITEMS_QUERY = `UPDATE user SET favItems = '${favItems}' WHERE user.userID = ${userID};`
+  connection.query(UPDATE_FAVITEMS_QUERY, (err, results) => {
+    if (err) {
+      return res.json({
+        msg: 'error',
+        res : err
+      });
+    } else {
+      return res.json({
+        msg : 'success',
+        res : results
+      });
+    }
+  });
+});
+
+app.get('/users/info', (req, res) =>{
+  const { id } = req.query;
+  const GET_USERS_QUERY = `SELECT userID, userName, firstName, lastName, favItems FROM user
+  WHERE userID = '${id}'`;
+  connection.query(GET_USERS_QUERY, (err, results) => {
+    if (err) {
+      return res.send(err);
+    }
+    return res.json({
+      user : {
+        id : results[0].userID,
+        firstName : results[0].firstName,
+        lastName : results[0].lastName,
+        userName : results[0].userName,
+        favItems : results[0].favItems,
+      }
+    });
+  });
+});
 app.listen(4000, () => {
-  console.log("PCP server listening on port 4000 ");
+  console.log(`PCP server listening on port 4000`);
+  console.log(`Using host ${CREDENTIALS.host}`);
 });
