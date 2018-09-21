@@ -169,10 +169,11 @@ app.get('/products/update', (req, res) => {
     productName,
     productPrice,
     productAvailability,
+    productMatch,
     supermarketID
   } = req.query;
-  const UPDATE_PRODUCTS_QUERY = `UPDATE product SET (productName, productPrice, productAvailability, supermarketID)
-  VALUES ('${productName}', ${productPrice}, ${productAvailability}, ${supermarketID}) WHERE productID = ${productID}`;
+  const UPDATE_PRODUCTS_QUERY = `UPDATE product SET productName = '${productName}', productPrice = '${productPrice}', productAvailability = ${productAvailability}, productMatch = ${productMatch}, supermarketID = ${supermarketID} WHERE productID=${productID}`; 
+  console.log(UPDATE_PRODUCTS_QUERY);
   connection.query(UPDATE_PRODUCTS_QUERY, (err, results) =>{
     if (err) {
       return res.json({
@@ -705,6 +706,6 @@ app.get('/users/info', (req, res) =>{
   });
 });
 app.listen(4000, () => {
-  console.log(`PCP server listening on port 4000`);
+  console.log(`PCP API listening on port 4000`);
   console.log(`Using host ${CREDENTIALS.host}`);
 });
