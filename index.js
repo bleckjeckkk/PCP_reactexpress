@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const app = express();
 
 const SELECT_ALL_SUPERMARKET_QUERY = 'SELECT * FROM supermarket WHERE supermarket.supermarketID != 0';
