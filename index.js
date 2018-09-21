@@ -173,7 +173,6 @@ app.get('/products/update', (req, res) => {
     supermarketID
   } = req.query;
   const UPDATE_PRODUCTS_QUERY = `UPDATE product SET productName = '${productName}', productPrice = '${productPrice}', productAvailability = ${productAvailability}, productMatch = ${productMatch}, supermarketID = ${supermarketID} WHERE productID=${productID}`; 
-  console.log(UPDATE_PRODUCTS_QUERY);
   connection.query(UPDATE_PRODUCTS_QUERY, (err, results) =>{
     if (err) {
       return res.json({
