@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const app = express();
 
 const SELECT_ALL_SUPERMARKET_QUERY = 'SELECT * FROM supermarket WHERE supermarket.supermarketID != 0';
@@ -21,7 +21,7 @@ const OFFLINE_CREDENTIALS = {
   database: 'price_check_program'
 };
 
-const CREDENTIALS = ONLINE_CREDENTIALS;
+const CREDENTIALS = OFFLINE_CREDENTIALS;
 
 //const connection = mysql.createConnection(CREDENTIALS);
 
@@ -100,8 +100,8 @@ app.get('/users/add', (req, res) => {
         res : err
       });
     }
-    const INSERT_USERS_QUERY = `INSERT INTO user (userID, userName, userPassword, firstName, lastName)
-    VALUES (${userID},'${userName}', '${hash}', '${firstName}', '${lastName}')`;
+    const INSERT_USERS_QUERY = `INSERT INTO user (userID, userName, userPassword, firstName, lastName, favItems)
+    VALUES (${userID},'${userName}', '${hash}', '${firstName}', '${lastName}', '[]')`;
     connection.query(INSERT_USERS_QUERY, (err, results) => {
       if (err) {
         return res.json({
@@ -394,7 +394,7 @@ app.get('/feedbacks/getCount', (req, res) => {
 // --------------------------------- GET ALL ---------------------------------
 // ---------------------------------------------------------------------------
 // gets all products in the database
-const productQuery = 'SELECT productID, productName, productPrice, productAvailability, s.supermarketName, s.supermarketID, productMatch FROM product p INNER JOIN supermarket s WHERE p.supermarketID = s.supermarketID AND productID != 0';
+const productQuery = 'SELECT productID, productName, productPrice, productAvailability, s.supermarketName, s.supermarketID, productMatch FROM product p INNER JOIN supermarket s WHERE p.supermarketID = s.supermarketID AND productID != 0 ORDER BY productID';
 app.get('/products', (req, res) => {
   connection.query(productQuery, (err, results) => {
     if (err) {
@@ -447,7 +447,7 @@ app.get('/supermarkets', (req, res) => {
 
 //gets all feedbacks in the database
 app.get('/feedbacks', (req, res) => {
-  connection.query('SELECT f.feedbackID, f.feedbackContent, usr.firstName FROM feedback f INNER JOIN user usr WHERE f.userID = usr.userID', (err, results) => {
+  connection.query('SELECT f.feedbackID, f.feedbackContent, usr.firstName, usr.userID FROM feedback f INNER JOIN user usr WHERE f.userID = usr.userID', (err, results) => {
     if (err) {
       return res.json({
         msg: 'error',
@@ -704,7 +704,10 @@ app.get('/users/info', (req, res) =>{
     });
   });
 });
-app.listen(4000, () => {
-  console.log(`PCP API listening on port 4000`);
+
+const PORT = 4000;
+
+app.listen(PORT, () => {
+  console.log(`PCP API listening on port ${PORT}`);
   console.log(`Using host ${CREDENTIALS.host}`);
 });
