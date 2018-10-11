@@ -71,7 +71,8 @@ app.get('/products/add', (req, res) => {
     productMatch,
   } = req.query;
   const INSERT_PRODUCTS_QUERY = `INSERT INTO product (productID,productName, productPrice, productAvailability, supermarketID, productMatch)
-  VALUES (${productID},'${productName}', ${productPrice}, ${productAvailability}, ${supermarketID}, ${productMatch})`;
+  VALUES (${productID},'${productName}', ${productPrice}, ${productAvailability}, ${supermarketID}, ${productMatch})`
+  const NOT_ONE_SIDED_CHANGE = `UPDATE product SET productMatch = ${productID} WHERE productID = ${productMatch != 0 ? productMatch : 0}` 
   console.log(INSERT_PRODUCTS_QUERY);
   connection.query(INSERT_PRODUCTS_QUERY, (err, results) => {
     if (err) {
@@ -80,9 +81,18 @@ app.get('/products/add', (req, res) => {
         res : err
       });
     } else {
-      return res.json({
-        msg: 'success',
-        res : results
+      connection.query(NOT_ONE_SIDED_CHANGE, (err, results) => {
+        if (err) {
+          return res.json({
+            msg: 'error',
+            res : err
+          });
+        } else {
+          return res.json({
+            msg: 'success',
+            res : results
+          });
+        }
       });
     }
   });
@@ -172,7 +182,8 @@ app.get('/products/update', (req, res) => {
     productMatch,
     supermarketID
   } = req.query;
-  const UPDATE_PRODUCTS_QUERY = `UPDATE product SET productName = '${productName}', productPrice = '${productPrice}', productAvailability = ${productAvailability}, productMatch = ${productMatch}, supermarketID = ${supermarketID} WHERE productID=${productID}`; 
+  const UPDATE_PRODUCTS_QUERY = `UPDATE product SET productName = '${productName}', productPrice = '${productPrice}', productAvailability = ${productAvailability}, productMatch = ${productMatch}, supermarketID = ${supermarketID} WHERE productID=${productID}`;
+  const NOT_ONE_SIDED_CHANGE = `UPDATE product SET productMatch = ${productID} WHERE productID = ${productMatch != 0 ? productMatch : 0}` 
   connection.query(UPDATE_PRODUCTS_QUERY, (err, results) =>{
     if (err) {
       return res.json({
@@ -180,9 +191,18 @@ app.get('/products/update', (req, res) => {
         res : err
       });
     } else {
-      return res.json({
-        msg: 'success',
-        res : results
+      connection.query(NOT_ONE_SIDED_CHANGE, (err, results) =>{
+        if (err) {
+          return res.json({
+            msg: 'error',
+            res : err
+          });
+        } else {
+          return res.json({
+            msg: 'success',
+            res : results
+          });
+        }
       });
     }
   });
@@ -252,18 +272,39 @@ app.get('/users/delete', (req, res) => {
 //delete products
 app.get('/products/delete', (req, res) => {
   const{ productID } = req.query;
+  const GET_PRODUCT_INFO = `SELECT productID, productMatch FROM product WHERE productID = ${productID}`
   const DELETE_PRODUCTS_QUERY = `DELETE FROM product WHERE productID = ${productID}`;
-  console.log(DELETE_PRODUCTS_QUERY);
-  connection.query(DELETE_PRODUCTS_QUERY, (err, results) => {
+
+  connection.query(GET_PRODUCT_INFO, (err, results) => {
     if (err) {
       return res.json({
         msg: 'error',
         res : err
       });
     } else {
-      return res.json({
-        msg: 'success',
-        res : results
+      matchedID = results[0].productMatch
+      const REASSIGN_PAIRED_PRODUCT = `UPDATE product SET productMatch = '0' WHERE productID = ${matchedID}`
+      connection.query(REASSIGN_PAIRED_PRODUCT, (err, results) => {
+        if (err) {
+          return res.json({
+            msg: 'error',
+            res : err
+          });
+        } else {
+          connection.query(DELETE_PRODUCTS_QUERY, (err, results) => {
+            if (err) {
+              return res.json({
+                msg: 'error',
+                res : err
+              });
+            } else {
+              return res.json({
+                msg: 'success',
+                res : results
+              });
+            }
+          });
+        }
       });
     }
   });
