@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const app = express();
 
 const SELECT_ALL_SUPERMARKET_QUERY = 'SELECT * FROM supermarket WHERE supermarket.supermarketID != 0';
-const SELECT_ALL_USER_QUERY ='SELECT userID, userName, firstName, lastName FROM user';
+const SELECT_ALL_USER_QUERY ='SELECT userID, userName, firstName, lastName FROM user WHERE isAdmin != 1';
 
 const ONLINE_CREDENTIALS = {
   host: 'sql12.freemysqlhosting.net',
