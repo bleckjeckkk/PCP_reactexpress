@@ -746,7 +746,7 @@ app.get('/users/info', (req, res) =>{
   });
 });
 
-const PORT = 4000;
+const PORT = 443;
 
 app.listen(PORT, () => {
   console.log(`PCP API listening on port ${PORT}`);
