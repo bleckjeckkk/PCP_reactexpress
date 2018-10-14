@@ -21,7 +21,7 @@ const OFFLINE_CREDENTIALS = {
   database: 'price_check_program'
 };
 
-const CREDENTIALS = OFFLINE_CREDENTIALS;
+const CREDENTIALS = ONLINE_CREDENTIALS;
 
 //const connection = mysql.createConnection(CREDENTIALS);
 

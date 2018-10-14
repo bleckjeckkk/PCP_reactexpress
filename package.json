@@ -4,7 +4,7 @@
   "description": "Boilerplate for React and Express",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "server": "nodemon server.js"
   },
   "author": "Derick Ho",
