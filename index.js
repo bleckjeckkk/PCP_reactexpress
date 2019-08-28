@@ -9,9 +9,9 @@ const SELECT_ALL_USER_QUERY ='SELECT userID, userName, firstName, lastName FROM 
 
 const ONLINE_CREDENTIALS = {
   host: 'sql12.freemysqlhosting.net',
-  user: 'sql12256579',
-  password: 'mee1pMZnJ4',
-  database: 'sql12256579'
+  user: 'sql12303279',
+  password: 'zbU2YYDlY3',
+  database: 'sql12303279'
 };
 
 const OFFLINE_CREDENTIALS = {
